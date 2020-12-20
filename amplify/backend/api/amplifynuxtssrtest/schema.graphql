@@ -1,0 +1,41 @@
+type User
+  @model
+  @auth(
+    rules: [
+      { allow: owner, ownerField: "id", operations: [create, update, delete] }
+      { allow: groups, groups: ["admin"], operations: [create, update, delete] }
+      { allow: private, operations: [read] }
+      { allow: public, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  email: String!
+  name: String
+  biography: String
+  website: String
+  createdAt: String!
+  posts: [Post] @connection(name: "UserPosts", keyField: "authorId")
+}
+
+type Post
+  @model
+  @auth(
+    rules: [
+      {
+        allow: owner
+        ownerField: "authorId"
+        operations: [create, update, delete]
+      }
+      { allow: groups, groups: ["admin"], operations: [create, update, delete] }
+      { allow: private, operations: [read] }
+      { allow: public, operations: [read] }
+    ]
+  ) {
+  id: ID!
+  title: String!
+  summary: String!
+  body: String!
+  createdAt: String!
+  authorId: String!
+  author: User! @connection(name: "UserPosts", keyField: "authorId")
+}
